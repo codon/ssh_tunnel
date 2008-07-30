@@ -1,0 +1,2 @@
+#!/bin/bash
+$HOME/.ssh/scripts/tunnel.sh restart remote
