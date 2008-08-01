@@ -1,0 +1,22 @@
+This is a set of scripts designed written to automatically toggle a SOCKS5 proxy between a remote
+system and localhost. The reason to do this is if you have a laptop that has location awareness and
+you have certain applications configured to use a SOCKS5 proxy on localhost, but you do not wish to 
+tunnel all of your traffic through a remote server when you are not in a "monitored" enviroment.
+
+=====
+SETUP
+=====
+1) Export TUNNEL_HOST in you .bash_profile. This will be the remote host to ssh into when the tunnel is
+   in "remote" mode.
+
+2) Make sure you you have public/private key authentication to the server configured it step 1.
+
+3) Configure your context switching softare to run ssh_tunnel/start_remote when you enter any context
+   where you wish to tunnel you traffic thourgh a remote host.
+
+4) Configure the context switching software to run ssh_tunnel/start_local when you leave any context
+   configured in step 4.
+
+I have tested this on Mac OS X 10.5.4 using Marco Polo 2.5 <http://www.symonds.id.au/marcopolo/> for
+the context software.
+
