@@ -70,7 +70,8 @@ start_tunnel() {
 	STATUS=$(tunnel_status)
 	TUNNEL="${DIR}/tunnel"
 
-	if [ ! -e "${DIR}/tunnel" ]; then
+	if [ ! -e "${TUNNEL}" ]; then
+		echo "creating symbolic from $TUNNEL to $SSH"
 		$LN -s $SSH $TUNNEL
 	fi
 
