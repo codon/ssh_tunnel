@@ -1,11 +1,14 @@
 #!/bin/bash
 
+DIR=`/usr/bin/dirname $0`
 PATH='/usr/bin:/bin'
 PID=''
-PID_FILE="${HOME}/.ssh/scripts/.tunnel"
+PID_FILE="${DIR}/.tunnel"
 RM='/bin/rm'
 PS='/bin/ps'
+LN='/bin/ln'
 AWK='/usr/bin/awk'
+SSH='/usr/bin/ssh'
 TR='/usr/bin/tr'
 KILL='/bin/kill'
 
@@ -17,6 +20,16 @@ pidof() {
 tunnel_status() {
 	STATUS='stopped'
 	if [ -e ${PID_FILE} ]; then
+		RUNNING_PID=$( pidof 'tunnel' )
+		if [ -n "$RUNNING_PID" ]; then
+			$PS -p $RUNNING_PID > /dev/null
+			if [ $? != 0 ]; then
+				STATUS='stopped'
+			else
+				STATUS='running'
+			fi
+		fi
+	else
 		RUNNING_PID=$( pidof 'tunnel' )
 		if [ -n "$RUNNING_PID" ]; then
 			$PS -p $RUNNING_PID > /dev/null
@@ -55,7 +68,12 @@ stop_tunnel() {
 
 start_tunnel() {
 	STATUS=$(tunnel_status)
-	SSH="${HOME}/tunnel"
+	TUNNEL="${DIR}/tunnel"
+
+	if [ ! -e "${DIR}/tunnel" ]; then
+		$LN -s $SSH $TUNNEL
+	fi
+
 	if [ $STATUS == "stopped" ]; then
 		TARGET=''
 		case $1 in
@@ -66,6 +84,7 @@ start_tunnel() {
 				fi
 
 				TARGET=$TUNNEL_HOST
+				;;
 			localhost)
 				TARGET='localhost'
 				;;
@@ -75,7 +94,7 @@ start_tunnel() {
 				;;
 		esac
 
-		$SSH -N -D 50022 $TARGET 2>/dev/null &
+		$TUNNEL -N -D 50022 $TARGET 2>/dev/null &
 
 		RUNNING_PID=$( pidof 'tunnel' )
 		echo $RUNNING_PID > $PID_FILE

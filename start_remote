@@ -1,2 +1,3 @@
 #!/bin/bash
-$HOME/.ssh/scripts/tunnel.sh restart remote
+DIR=`/usr/bin/dirname $0`
+${DIR}/tunnel.sh restart remote
