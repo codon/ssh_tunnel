@@ -11,10 +11,13 @@ SETUP
 
 2) Make sure you you have public/private key authentication to the server configured it step 1.
 
-3) Configure your context switching softare to run ssh_tunnel/start_remote when you enter any context
+3) Make a symbolic link to your ssh program from the ssh_tunnel directory. Name this link 'tunnel'
+      ln -s /usr/bin/sh tunnel
+
+4) Configure your context switching softare to run ssh_tunnel/start_remote when you enter any context
    where you wish to tunnel you traffic thourgh a remote host.
 
-4) Configure the context switching software to run ssh_tunnel/start_local when you leave any context
+5) Configure the context switching software to run ssh_tunnel/start_local when you leave any context
    configured in step 4.
 
 I have tested this on Mac OS X 10.5.4 using Marco Polo 2.5 <http://www.symonds.id.au/marcopolo/> for
