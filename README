@@ -23,3 +23,82 @@ SETUP
 I have tested this on Mac OS X 10.5.4 using Marco Polo 2.5 <http://www.symonds.id.au/marcopolo/> for
 the context software.
 
+========
+SEE ALSO
+========
+I am including the source for connect.c, which allows non-SOCKS5 proxy-aware programs to use a SOCKS5
+proxy transparently. This means you can tunnel SSH connections over an SSH connection. This is great
+for traversing a corporate firewall allowing you to work remotely more readily.
+
+http://bent.latency.net/bent/git/goto-san-connect-1.85/src/connect.html
+
+------------------
+Building connect.c
+------------------
+The internet being what it is, I want to include some important bits from the above url regarding
+building connect.c for your system.
+
+Compile and Install
+
+In most environment, you can compile connect.c simply. On UNIX environment, you can use cc or gcc.
+On Windows environment, you can use Microsoft Visual C, Borland C or Cygwin gcc.
+
++--------------------------+--------------------------------------------------+
+| Compiler                 | command line to compile                          |
++--------------------------+--------------------------------------------------+
+| UNIX cc                  | cc connect.c -o connect                          |
+| UNIX gcc                 | gcc connect.c -o connect                         |
+| Solaris                  | gcc connect.c -o connect -lnsl -lsocket -lresolv |
+| Microsoft Visual C/C++   | cl connect.c wsock32.lib advapi32.lib            |
+| Borland C                | bcc32 connect.c wsock32.lib advapi32.lib         |
+| Cygwin gcc               | gcc connect.c -o connect                         |
+| Mac OS/Darwin            | gcc connect.c -o connect -lresolv                |
++--------------------------+--------------------------------------------------+
+
+To install connect command, simply copy compiled binary to directory in your PATH
+(ex. /usr/local/bin). Like this:
+
+$ cp connect /usr/local/bin
+
+Modify your ~/.ssh/config
+
+Modify your ~/.ssh/config file to use connect command as proxy command. For the case of SOCKS server
+is running on firewall host socks.local.net with port 1080, you can add ProxyCommand option in
+~/.ssh/config, like this:
+
+Host remote.outside.net
+  ProxyCommand connect -S socks.local.net %h %p
+
+%h and %p will be replaced on invoking proxy command with target hostname and port specified to SSH
+command.
+
+If you hate writing many entries of remote hosts, following example may help you.
+
+## Outside of the firewall, use connect command with SOCKS conenction.
+Host *
+  ProxyCommand connect -S socks.local.net %h %p
+
+## Inside of the firewall, use connect command with direct connection.
+Host *.local.net
+  ProxyCommand connect %h %p
+
+If you want to use http proxy, use -H option instead of -S option in examle above, like this:
+
+## Outside of the firewall, with HTTP proxy
+Host *
+  ProxyCommand connect -H proxy.local.net:8080 %h %p
+
+## Inside of the firewall, direct
+Host *.local.net
+  ProxyCommand connect %h %p
+
+Use SSH
+
+After editing your ~/.ssh/config file, you are ready to use ssh. You can execute ssh without any
+special options as if remote host is IP reachable host. Following is an example to execute hostname
+command on host remote.outside.net.
+
+$ ssh remote.outside.net hostname
+remote.outside.net
+$
+
